@@ -3,6 +3,7 @@ const models = require('../models');
 
 // get the Cat model
 const Cat = models.Cat.CatModel;
+const Dog = models.Dog.DogModel;
 
 // default fake data so that we have something to work with until we make a real Cat
 const defaultData = {
@@ -10,8 +11,16 @@ const defaultData = {
   bedsOwned: 0,
 };
 
+const defaultDogData = {
+  name: 'ruff',
+  breed: 'good dog',
+  age: 3,
+};
+
 // object for us to keep track of the last Cat we made and dynamically update it sometimes
 let lastAdded = new Cat(defaultData);
+
+let lastDogAdded = new Dog(defaultDogData);
 
 // function to handle requests to the main page
 // controller functions in Express receive the full HTTP request
@@ -45,6 +54,10 @@ const readAllCats = (req, res, callback) => {
   Cat.find(callback).lean();
 };
 
+const readAllDogs = (req, res, callback) => {
+  Dog.find(callback).lean();
+};
+
 
 // function to find a specific cat on request.
 // Express functions always receive the request and the response.
@@ -68,6 +81,21 @@ const readCat = (req, res) => {
   // Behind the scenes this runs the findOne method.
   // You can find the findByName function in the model file.
   Cat.findByName(name1, callback);
+};
+
+const readDog = (req, res) => {
+  const name2 = req.query.name;
+
+  const callback = (err, doc) => {
+    if (err) {
+      return res.status(500).json({ err }); // if error, return it
+    }
+
+    // return success
+    return res.json(doc);
+  };
+
+  Dog.findByName(name2, callback);
 };
 
 // function to handle requests to the page1 page
@@ -124,6 +152,13 @@ const getName = (req, res) => {
   res.json({ name: lastAdded.name });
 };
 
+const getDogName = (req, res) => {
+  // res.json returns json to the page.
+  // Since this sends back the data through HTTP
+  // you can't send any more data to this user until the next response
+  res.json({ name: lastDogAdded.name });
+};
+
 // function to handle a request to set the name
 // controller functions in Express receive the full HTTP request
 // and get a pre-filled out response object to send
@@ -168,6 +203,42 @@ const setName = (req, res) => {
   return res;
 };
 
+const setDogName = (req, res) => {
+  if (!req.body.name || !req.body.breed || !req.body.age) {
+    // if not respond with a 400 error
+    // (either through json or a web page depending on the client dev)
+    return res.status(400).json({ error: 'name, breed, and age are all required' });
+  }
+
+  const name = `${req.body.name}`;
+  const breed = `${req.body.breed}`;
+  const age = `${req.body.age}`;
+
+  // dummy JSON to insert into database
+  const dogData = {
+    name,
+    breed,
+    age,
+  };
+
+  // create a new object of DogModel with the object to save
+  const newDog = new Dog(dogData);
+
+  // create new save promise for the database
+  const saveDogPromise = newDog.save();
+
+  saveDogPromise.then(() => {
+    lastDogAdded = newDog;
+    // return success
+    res.json({ name: lastDogAdded.name, breed: lastDogAdded.breed, age: lastDogAdded.age });
+  });
+
+  // if error, return it
+  saveDogPromise.catch((err) => res.status(500).json({ err }));
+
+  return res;
+};
+
 
 // function to handle requests search for a name and return the object
 // controller functions in Express receive the full HTTP request
@@ -205,6 +276,32 @@ const searchName = (req, res) => {
 
     // if a match, send the match back
     return res.json({ name: doc.name, beds: doc.bedsOwned });
+  });
+};
+
+const searchDogName = (req, res) => {
+  if (!req.query.name) {
+    return res.status(400).json({ error: 'Name is required to perform a search' });
+  }
+
+  return Dog.findByName(req.query.name, (err, doc) => {
+    // errs, handle them
+    if (err) {
+      return res.status(500).json({ err }); // if error, return it
+    }
+
+    // if no matches, let them know
+    // (does not necessarily have to be an error since technically it worked correctly)
+    if (!doc) {
+      return res.json({ error: 'No dogs found' });
+    }
+
+    // if a match, send the match back and increment age
+    lastDogAdded.age++;
+    const saveDogPromise = lastDogAdded.save();
+    saveDogPromise.then(() => res.json({ name: lastDogAdded.name, breed: lastDogAdded.breed, age: lastDogAdded.age }));
+    saveDogPromise.catch((err) => res.status(500).json({ err }));
+    return res.json({ name: doc.name, breed: doc.breed, age: doc.age });
   });
 };
 
@@ -256,9 +353,13 @@ module.exports = {
   page2: hostPage2,
   page3: hostPage3,
   readCat,
+  readDog,
   getName,
+  getDogName,
   setName,
+  setDogName,
   updateLast,
   searchName,
+  searchDogName,
   notFound,
 };
