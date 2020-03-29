@@ -69,7 +69,7 @@ const readCat = (req, res) => {
   const callback = (err, doc) => {
     if (err) {
       return res.status(500).json({
-        err
+        err,
       }); // if error, return it
     }
 
@@ -91,7 +91,7 @@ const readDog = (req, res) => {
   const callback = (err, doc) => {
     if (err) {
       return res.status(500).json({
-        err
+        err,
       }); // if error, return it
     }
 
@@ -111,13 +111,13 @@ const hostPage1 = (req, res) => {
   const callback = (err, docs) => {
     if (err) {
       return res.status(500).json({
-        err
+        err,
       }); // if error, return it
     }
 
     // return success
     return res.render('page1', {
-      cats: docs
+      cats: docs,
     });
   };
 
@@ -156,13 +156,13 @@ const hostPage4 = (req, res) => {
   const callback = (err, docs) => {
     if (err) {
       return res.status(500).json({
-        err
+        err,
       }); // if error, return it
     }
 
     // return success
     return res.render('page4', {
-      dogs: docs
+      dogs: docs,
     });
   };
 
@@ -177,7 +177,7 @@ const getName = (req, res) => {
   // Since this sends back the data through HTTP
   // you can't send any more data to this user until the next response
   res.json({
-    name: lastAdded.name
+    name: lastAdded.name,
   });
 };
 
@@ -186,7 +186,7 @@ const getDogName = (req, res) => {
   // Since this sends back the data through HTTP
   // you can't send any more data to this user until the next response
   res.json({
-    name: lastDogAdded.name
+    name: lastDogAdded.name,
   });
 };
 
@@ -203,7 +203,7 @@ const setName = (req, res) => {
     // if not respond with a 400 error
     // (either through json or a web page depending on the client dev)
     return res.status(400).json({
-      error: 'firstname,lastname and beds are all required'
+      error: 'firstname,lastname and beds are all required',
     });
   }
 
@@ -229,13 +229,13 @@ const setName = (req, res) => {
     // return success
     res.json({
       name: lastAdded.name,
-      beds: lastAdded.bedsOwned
+      beds: lastAdded.bedsOwned,
     });
   });
 
   // if error, return it
   savePromise.catch((err) => res.status(500).json({
-    err
+    err,
   }));
 
   return res;
@@ -246,7 +246,7 @@ const setDogName = (req, res) => {
     // if not respond with a 400 error
     // (either through json or a web page depending on the client dev)
     return res.status(400).json({
-      error: 'name, breed, and age are all required'
+      error: 'name, breed, and age are all required',
     });
   }
 
@@ -273,13 +273,13 @@ const setDogName = (req, res) => {
     res.json({
       name: lastDogAdded.name,
       breed: lastDogAdded.breed,
-      age: lastDogAdded.age
+      age: lastDogAdded.age,
     });
   });
 
   // if error, return it
   saveDogPromise.catch((err) => res.status(500).json({
-    err
+    err,
   }));
 
   return res;
@@ -299,7 +299,7 @@ const searchName = (req, res) => {
   // POSTS send data to add while GETS query for a page or data (such as a search)
   if (!req.query.name) {
     return res.status(400).json({
-      error: 'Name is required to perform a search'
+      error: 'Name is required to perform a search',
     });
   }
 
@@ -314,7 +314,7 @@ const searchName = (req, res) => {
     // errs, handle them
     if (err) {
       return res.status(500).json({
-        err
+        err,
       }); // if error, return it
     }
 
@@ -322,14 +322,14 @@ const searchName = (req, res) => {
     // (does not necessarily have to be an error since technically it worked correctly)
     if (!doc) {
       return res.json({
-        error: 'No cats found'
+        error: 'No cats found',
       });
     }
 
     // if a match, send the match back
     return res.json({
       name: doc.name,
-      beds: doc.bedsOwned
+      beds: doc.bedsOwned,
     });
   });
 };
@@ -337,7 +337,7 @@ const searchName = (req, res) => {
 const searchDogName = (req, res) => {
   if (!req.query.name) {
     return res.status(400).json({
-      error: 'Name is required to perform a search'
+      error: 'Name is required to perform a search',
     });
   }
 
@@ -345,7 +345,7 @@ const searchDogName = (req, res) => {
     // errs, handle them
     if (err) {
       return res.status(500).json({
-        err
+        err,
       }); // if error, return it
     }
 
@@ -353,7 +353,7 @@ const searchDogName = (req, res) => {
     // (does not necessarily have to be an error since technically it worked correctly)
     if (!doc) {
       return res.json({
-        error: 'No dogs found'
+        error: 'No dogs found',
       });
     }
 
@@ -363,7 +363,7 @@ const searchDogName = (req, res) => {
     saveDogPromise.then(() => res.json({
       name: lastDogAdded.name,
       breed: lastDogAdded.breed,
-      age: lastDogAdded.age
+      age: lastDogAdded.age,
     }));
     // saveDogPromise.catch((err) => res.status(500).json({
     //   err
@@ -371,7 +371,7 @@ const searchDogName = (req, res) => {
     return res.json({
       name: doc.name,
       breed: doc.breed,
-      age: doc.age
+      age: doc.age,
     });
   });
 };
@@ -398,12 +398,12 @@ const updateLast = (req, res) => {
   // send back the name as a success for now
   savePromise.then(() => res.json({
     name: lastAdded.name,
-    beds: lastAdded.bedsOwned
+    beds: lastAdded.bedsOwned,
   }));
 
   // if save error, just return an error for now
   savePromise.catch((err) => res.status(500).json({
-    err
+    err,
   }));
 };
 
