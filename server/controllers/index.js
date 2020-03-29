@@ -68,7 +68,9 @@ const readCat = (req, res) => {
   // With Mongoose's find functions, you will get an err and doc(s) back
   const callback = (err, doc) => {
     if (err) {
-      return res.status(500).json({ err }); // if error, return it
+      return res.status(500).json({
+        err
+      }); // if error, return it
     }
 
     // return success
@@ -88,7 +90,9 @@ const readDog = (req, res) => {
 
   const callback = (err, doc) => {
     if (err) {
-      return res.status(500).json({ err }); // if error, return it
+      return res.status(500).json({
+        err
+      }); // if error, return it
     }
 
     // return success
@@ -106,11 +110,15 @@ const hostPage1 = (req, res) => {
   // With Mongoose's find functions, you will get an err and doc(s) back
   const callback = (err, docs) => {
     if (err) {
-      return res.status(500).json({ err }); // if error, return it
+      return res.status(500).json({
+        err
+      }); // if error, return it
     }
 
     // return success
-    return res.render('page1', { cats: docs });
+    return res.render('page1', {
+      cats: docs
+    });
   };
 
   readAllCats(req, res, callback);
@@ -133,12 +141,12 @@ const hostPage2 = (req, res) => {
 // controller functions in Express receive the full HTTP request
 // and a pre-filled out response object to send
 const hostPage3 = (req, res) => {
-    // res.render takes a name of a page to render.
-    // These must be in the folder you specified as views in your main app.js file
-    // Additionally, you don't need .jade because you registered the file type
-    // in the app.js as jade. Calling res.render('index')
-    // actually calls index.jade. A second parameter of JSON can be passed
-    // into the jade to be used as variables with #{varName}
+  // res.render takes a name of a page to render.
+  // These must be in the folder you specified as views in your main app.js file
+  // Additionally, you don't need .jade because you registered the file type
+  // in the app.js as jade. Calling res.render('index')
+  // actually calls index.jade. A second parameter of JSON can be passed
+  // into the jade to be used as variables with #{varName}
   res.render('page3');
 };
 
@@ -147,11 +155,15 @@ const hostPage4 = (req, res) => {
   // With Mongoose's find functions, you will get an err and doc(s) back
   const callback = (err, docs) => {
     if (err) {
-      return res.status(500).json({ err }); // if error, return it
+      return res.status(500).json({
+        err
+      }); // if error, return it
     }
 
     // return success
-    return res.render('page4', { dogs: docs });
+    return res.render('page4', {
+      dogs: docs
+    });
   };
 
   readAllDogs(req, res, callback);
@@ -164,14 +176,18 @@ const getName = (req, res) => {
   // res.json returns json to the page.
   // Since this sends back the data through HTTP
   // you can't send any more data to this user until the next response
-  res.json({ name: lastAdded.name });
+  res.json({
+    name: lastAdded.name
+  });
 };
 
 const getDogName = (req, res) => {
   // res.json returns json to the page.
   // Since this sends back the data through HTTP
   // you can't send any more data to this user until the next response
-  res.json({ name: lastDogAdded.name });
+  res.json({
+    name: lastDogAdded.name
+  });
 };
 
 // function to handle a request to set the name
@@ -186,7 +202,9 @@ const setName = (req, res) => {
   if (!req.body.firstname || !req.body.lastname || !req.body.beds) {
     // if not respond with a 400 error
     // (either through json or a web page depending on the client dev)
-    return res.status(400).json({ error: 'firstname,lastname and beds are all required' });
+    return res.status(400).json({
+      error: 'firstname,lastname and beds are all required'
+    });
   }
 
   // if required fields are good, then set name
@@ -209,11 +227,16 @@ const setName = (req, res) => {
     // This way we can update it dynamically
     lastAdded = newCat;
     // return success
-    res.json({ name: lastAdded.name, beds: lastAdded.bedsOwned });
+    res.json({
+      name: lastAdded.name,
+      beds: lastAdded.bedsOwned
+    });
   });
 
   // if error, return it
-  savePromise.catch((err) => res.status(500).json({ err }));
+  savePromise.catch((err) => res.status(500).json({
+    err
+  }));
 
   return res;
 };
@@ -222,7 +245,9 @@ const setDogName = (req, res) => {
   if (!req.body.name || !req.body.breed || !req.body.age) {
     // if not respond with a 400 error
     // (either through json or a web page depending on the client dev)
-    return res.status(400).json({ error: 'name, breed, and age are all required' });
+    return res.status(400).json({
+      error: 'name, breed, and age are all required'
+    });
   }
 
   const name = `${req.body.name}`;
@@ -245,11 +270,17 @@ const setDogName = (req, res) => {
   saveDogPromise.then(() => {
     lastDogAdded = newDog;
     // return success
-    res.json({ name: lastDogAdded.name, breed: lastDogAdded.breed, age: lastDogAdded.age });
+    res.json({
+      name: lastDogAdded.name,
+      breed: lastDogAdded.breed,
+      age: lastDogAdded.age
+    });
   });
 
   // if error, return it
-  saveDogPromise.catch((err) => res.status(500).json({ err }));
+  saveDogPromise.catch((err) => res.status(500).json({
+    err
+  }));
 
   return res;
 };
@@ -267,7 +298,9 @@ const searchName = (req, res) => {
   // request body because they aren't a query
   // POSTS send data to add while GETS query for a page or data (such as a search)
   if (!req.query.name) {
-    return res.status(400).json({ error: 'Name is required to perform a search' });
+    return res.status(400).json({
+      error: 'Name is required to perform a search'
+    });
   }
 
   // Call our Cat's static findByName function.
@@ -280,43 +313,66 @@ const searchName = (req, res) => {
   return Cat.findByName(req.query.name, (err, doc) => {
     // errs, handle them
     if (err) {
-      return res.status(500).json({ err }); // if error, return it
+      return res.status(500).json({
+        err
+      }); // if error, return it
     }
 
     // if no matches, let them know
     // (does not necessarily have to be an error since technically it worked correctly)
     if (!doc) {
-      return res.json({ error: 'No cats found' });
+      return res.json({
+        error: 'No cats found'
+      });
     }
 
     // if a match, send the match back
-    return res.json({ name: doc.name, beds: doc.bedsOwned });
+    return res.json({
+      name: doc.name,
+      beds: doc.bedsOwned
+    });
   });
 };
 
 const searchDogName = (req, res) => {
   if (!req.query.name) {
-    return res.status(400).json({ error: 'Name is required to perform a search' });
+    return res.status(400).json({
+      error: 'Name is required to perform a search'
+    });
   }
 
   return Dog.findDogByName(req.query.name, (err, doc) => {
     // errs, handle them
     if (err) {
-      return res.status(500).json({ err }); // if error, return it
+      return res.status(500).json({
+        err
+      }); // if error, return it
     }
 
     // if no matches, let them know
     // (does not necessarily have to be an error since technically it worked correctly)
     if (!doc) {
-      return res.json({ error: 'No dogs found' });
+      return res.json({
+        error: 'No dogs found'
+      });
     }
 
     // if a match, send the match back and increment age
     lastDogAdded.age++;
     const saveDogPromise = lastDogAdded.save();
-    saveDogPromise.then(() => res.json({ name: lastDogAdded.name, breed: lastDogAdded.breed, age: lastDogAdded.age }));
-    saveDogPromise.catch((err) => res.status(500).json({ err }));
-    return res.json({ name: doc.name, breed: doc.breed, age: doc.age });
+    saveDogPromise.then(() => res.json({
+      name: lastDogAdded.name,
+      breed: lastDogAdded.breed,
+      age: lastDogAdded.age
+    }));
+    saveDogPromise.catch((err) => res.status(500).json({
+      err
+    }));
+    return res.json({
+      name: doc.name,
+      breed: doc.breed,
+      age: doc.age
+    });
   });
 };
 
@@ -340,10 +396,15 @@ const updateLast = (req, res) => {
   const savePromise = lastAdded.save();
 
   // send back the name as a success for now
-  savePromise.then(() => res.json({ name: lastAdded.name, beds: lastAdded.bedsOwned }));
+  savePromise.then(() => res.json({
+    name: lastAdded.name,
+    beds: lastAdded.bedsOwned
+  }));
 
   // if save error, just return an error for now
-  savePromise.catch((err) => res.status(500).json({ err }));
+  savePromise.catch((err) => res.status(500).json({
+    err
+  }));
 };
 
 // function to handle a request to any non-real resources (404)
