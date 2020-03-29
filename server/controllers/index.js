@@ -95,7 +95,7 @@ const readDog = (req, res) => {
     return res.json(doc);
   };
 
-  Dog.findByName(name2, callback);
+  Dog.findDogByName(name2, callback);
 };
 
 // function to handle requests to the page1 page
@@ -140,6 +140,21 @@ const hostPage3 = (req, res) => {
     // actually calls index.jade. A second parameter of JSON can be passed
     // into the jade to be used as variables with #{varName}
   res.render('page3');
+};
+
+const hostPage4 = (req, res) => {
+  // function to call when we get objects back from the database.
+  // With Mongoose's find functions, you will get an err and doc(s) back
+  const callback = (err, docs) => {
+    if (err) {
+      return res.status(500).json({ err }); // if error, return it
+    }
+
+    // return success
+    return res.render('page4', { dogs: docs });
+  };
+
+  readAllDogs(req, res, callback);
 };
 
 // function to handle get request to send the name
@@ -284,7 +299,7 @@ const searchDogName = (req, res) => {
     return res.status(400).json({ error: 'Name is required to perform a search' });
   }
 
-  return Dog.findByName(req.query.name, (err, doc) => {
+  return Dog.findDogByName(req.query.name, (err, doc) => {
     // errs, handle them
     if (err) {
       return res.status(500).json({ err }); // if error, return it
@@ -352,6 +367,7 @@ module.exports = {
   page1: hostPage1,
   page2: hostPage2,
   page3: hostPage3,
+  page4: hostPage4,
   readCat,
   readDog,
   getName,
