@@ -341,11 +341,11 @@ const searchDogName = (req, res) => {
     });
   }
 
-  return Dog.findDogByName(req.query.name, (err1, doc) => {
+  return Dog.findDogByName(req.query.name, (err, doc) => {
     // errs, handle them
-    if (err1) {
+    if (err) {
       return res.status(500).json({
-        err1
+        err
       }); // if error, return it
     }
 
@@ -365,9 +365,9 @@ const searchDogName = (req, res) => {
       breed: lastDogAdded.breed,
       age: lastDogAdded.age
     }));
-    saveDogPromise.catch((err1) => res.status(500).json({
-      err1
-    }));
+    // saveDogPromise.catch((err) => res.status(500).json({
+    //   err
+    // }));
     return res.json({
       name: doc.name,
       breed: doc.breed,
